@@ -1,0 +1,17 @@
+Simple math operations:
+The square root of 2 equals 1.41421. Should be 1.4142145 
+The fifth root of 2 equals 1.1487. Should be 1.1486983 
+e to the power of pi equals 23.1407. Should be 23.140692 
+pi to the power of pi equals 22.4592. Should be 22.459157 
+
+Gamma functions of 1-10:
+Γ(1) = 1
+Γ(2) = 1
+Γ(3) = 2
+Γ(4) = 6
+Γ(5) = 24
+Γ(6) = 120
+Γ(7) = 720
+Γ(8) = 5040
+Γ(9) = 40320
+Γ(10) = 362880
