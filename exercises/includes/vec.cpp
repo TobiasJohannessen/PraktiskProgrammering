@@ -1,7 +1,9 @@
 #include<iostream>
 #include<cmath>
 #include<string>
-#include"vec.h"
+#include "vec.h"
+#include "sfuns.h"
+//#include "sfuns.cpp"
 
 #define SELF (*this)
 
@@ -74,22 +76,12 @@ vec cross(const vec& v, const vec& w){
     new_z = v.x*w.y - v.y*w.x;
     return vec(new_x, new_y, new_z);
 }
-bool approx(double a, double b, double acc, double eps){
-    double diff = std::abs(a-b);
-    double size = std::max(std::abs(a), std::abs(b));
-    if (diff <= acc){
-        return true;
-    };
-    if (diff/size <= eps){
-        return true;
-    };
-    return false;
 
-}
 
+//Vector approx function. The approx function used on every element is found in sfuns.cpp
 bool approx(const vec& u, const vec& v, double acc, double eps){
-    if (!approx(u.x, v.x, acc, eps)) return false;
-    if (!approx(u.y, v.y, acc, eps)) return false;
-    if (!approx(u.z, v.z, acc, eps)) return false;
+    if (!::approx(u.x, v.x, acc, eps)) return false;
+    if (!::approx(u.y, v.y, acc, eps)) return false;
+    if (!::approx(u.z, v.z, acc, eps)) return false;
     return true;
-}
+}   

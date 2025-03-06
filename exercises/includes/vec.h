@@ -2,6 +2,7 @@
 #define HAVE_VEC_H
 #include<iostream>
 #include<string>
+#include"sfuns.h"
 
 struct vec{
     double x,y,z;
@@ -31,6 +32,6 @@ vec operator/(const vec& v, double c);
 
 double dot(vec& v, vec& w);
 vec cross(const vec& v, const vec& w);
-bool approx(double a, double b, double acc=1e-9, double eps=1e-9);
+
 bool approx(const vec& u, const vec& v, double acc=1e-9, double eps=1e-9);
 #endif

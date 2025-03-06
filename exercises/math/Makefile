@@ -4,11 +4,9 @@ Out.txt: main
 main: main.o
 	g++ main.o -o main
 
-main.o: main.cpp
+main.o: main.cpp ../includes/sfuns.cpp
 	g++ -c main.cpp
 
-sfuns.o : sfuns.cpp sfuns.h
-	$(CXX) $(CXXFLAGS) -c -o sfuns.o sfuns.cpp #-c stands for compile only
 
 
 clean:

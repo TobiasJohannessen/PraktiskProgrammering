@@ -1,4 +1,4 @@
-#include "vec.h"
+#include "../includes/vec.h"
 
 int main(){
 
@@ -28,8 +28,8 @@ int main(){
     v5.print("v5 = v1 * 5 = ");
 
     std::cout << "\nTest approximate function on vectors: \n";
-    std::cout << "approx(v1, v2) = " << (approx(v1,v2) ? "True":"False") << std::endl;
-    std::cout << "approx(v4, v5) = " << (approx(v4,v5) ? "True":"False") << std::endl;
+    std::cout << "approx(v1, v2) = " << (approx(v1,v2, 1e-9, 1e-9) ? "True":"False") << std::endl;
+    std::cout << "approx(v4, v5) = " << (approx(v4,v5, 1e-9, 1e-9) ? "True":"False") << std::endl;
 
 
     std::cout << "\nTest dot products:\n";

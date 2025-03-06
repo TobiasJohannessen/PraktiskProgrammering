@@ -2,6 +2,8 @@
 #include<fstream>
 #include<string>
 #include<cmath>
+#include<cstdlib>
+#include<sstream>
 #include<iomanip>
 using namespace std;
 
@@ -34,10 +36,13 @@ int main(int argc, char* argv[]) {
     if (outstream.fail()) {
         cerr << "Error: cannot open file " << outfile << endl;
         return 1;
-    }
-    outstream << fixed << "x" << "\t" << "sin(x)" << "\t" << "cos(x)" << endl;
+    };
+	string str;
+	getline(instream, str);
+    outstream << fixed << "x (pi)" << "\t" << "sin(x)" << "\t" << "cos(x)" << endl;
 	while(instream >> x){
-        outstream << fixed << x << "\t"<< sin(x) << "\t" << cos(x) << endl;
+		x = x/6;
+        outstream << fixed << x << "\t"<< sin(x * M_PI) << "\t" << cos(x * M_PI) << endl;
     };  
 	
 

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <cmath>
-#include "sfuns.cpp"
+#include "../includes/sfuns.cpp"
 
 using namespace std;
 

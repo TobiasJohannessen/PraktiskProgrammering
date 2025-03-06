@@ -1,16 +1,16 @@
 CXX = g++
 CXXFLAGS = -std=c++11 -Wall -Wextra
+INCLUDEPATH = ../includes/
 
 out.txt: main
 	./main > out.txt
 
-main: main.o vec.o
-	c++ -o main main.o vec.o
+main: main.o ../includes/vec.o
+	c++ -o main main.o ../includes/vec.cpp ../includes/sfuns.cpp
 
-main.o: main.cpp vec.h
+main.o: main.cpp ../includes/vec.o
 	c++ -c main.cpp
 
-vec.o: vec.cpp vec.h
-	c++ -c vec.o vec.cpp
+
 clean:
-	rm -f main.o out.txt vec.o main
+	rm -f main.o out.txt main
