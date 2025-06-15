@@ -102,7 +102,7 @@ public:
 	static mtuple decomp(const matrix&);
 	static vector solve(const matrix&, const matrix&, const vector&);
 	static double det(const matrix&);
-	static matrix inverse(const matrix&, const matrix&);
+	static matrix inverse(const matrix&);
 
 	QR() = delete; //Prevent instantiation i.e. this class is only used to call upon functions and not as an object itself.
 };

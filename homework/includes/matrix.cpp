@@ -395,58 +395,31 @@ double QR::det(const matrix& M) {
     return determinant; // Changed from std::fabs to directly return determinant
 }
 
-matrix QR::inverse(const matrix& A, const matrix& B) {
-    // This function needs a proper implementation for matrix inverse.
-    // Example: Solving A X = I, where X is the inverse.
-    // If A = QR, then QR X = I => R X = Q^T I => R X = Q^T.
-    // Solve R x_k = (Q^T)_k (k-th column of Q^T) for each column x_k of X.
-
-    if (A.size1() != A.size2() || B.size1() != B.size2() || A.size1() != B.size1()) {
-        throw std::invalid_argument("Matrices must be square and of the same size for inverse (and the current placeholder addition).");
+matrix QR::inverse(const matrix& A) {
+    if (A.size1() != A.size2()) {
+        throw std::invalid_argument("Inverse is only defined for square matrices.");
     }
+    QR::mtuple qr = QR::decomp(A);
+    matrix Q = std::get<0>(qr);
+    matrix R = std::get<1>(qr);
 
-    // Example of how inverse would be structured (conceptually, not full code)
-    QR::mtuple qr_A = QR::decomp(A);
-    matrix Q = std::get<0>(qr_A);
-    matrix R = std::get<1>(qr_A);
-
-    matrix A_inv(A.size1(), A.size2());
-    matrix Q_transpose = Q.transpose(); // Get Q transpose
-
-    // Create identity matrix
-    matrix I(A.size1(), A.size1());
-    I.setid();
-
-    for (int k = 0; k < A.size2(); ++k) { // For each column of the identity matrix
-        vector e_k(A.size1());
-        if (k < A.size1()) e_k[k] = 1.0; // Standard basis vector
-
-        // Solve Rx_k = (Q^T)e_k
-        // (Q^T)e_k is just the k-th column of Q_transpose
-        vector col_Q_transpose_k = Q_transpose.cols[k]; // Assuming Q_transpose is also column-major
-
-        vector inv_col_k = QR::solve(Q, R, e_k); // This uses the solve function which does Q^T b
-                                                 // No, it should be solve(R, (Q^T)*e_k)
-                                                 // Let's re-think: solve(R, Q_transpose * e_k)
+    // Solve Ax_i = e_i for each standard basis vector e_i, where A = QR.
+    // The solution x_i will be the i-th column of A_inverse.
+    matrix A_inverse(A.size1(), A.size2()); // Initialize A_inverse with correct dimensions
+    for (int i = 0; i < A.size2(); ++i) { // Iterate through columns of the identity matrix
+        vector e(A.size1()); // e_i will have size of rows of A
+        e[i] = 1.0; // Standard basis vector
         
-        // Correct approach for A^-1:
-        // A*X = I => QR*X = I => R*X = Q^T
-        // We need to solve R*x_j = (Q^T)_j for each column j of the inverse matrix X.
-        // So, the RHS vector is the j-th column of Q^T.
-        vector rhs_col_j = Q_transpose.cols[k]; // j-th column of Q^T
-        vector x_col_j = QR::solve(R, I, rhs_col_j); // **R needs to be solved with I, but QR::solve takes (Q,R,b)**
-                                                     // This means QR::solve is not directly reusable here.
+        // QR::solve(Q, R, e) solves QRx = e, which is Ax = e.
+        // The returned vector 'x' is the i-th column of A_inverse.
+        vector x_col = QR::solve(Q, R, e); 
 
-        // You need a specific solve function for just upper triangular system Rx=b:
-        // vector solve_upper_triangular(const matrix& R, const vector& b) { ... }
-        // Then, use it like:
-        // vector x_col_j = solve_upper_triangular(R, rhs_col_j);
-        // And then assign x_col_j to the k-th column of A_inv.
-        // A_inv.cols[k] = x_col_j; // Or whatever your column assignment mechanism is
+        // Populate the columns of A_inverse
+        for (int j = 0; j < A.size1(); ++j) {
+            A_inverse(j, i) = x_col[j]; // A_inverse(row, col) = x_col[row]
+        }
     }
-
-    // Placeholder until proper inverse implemented:
-    throw std::runtime_error("Matrix inverse not yet implemented.");
+    return A_inverse; // This matrix is already A_inverse
 }
 
 
