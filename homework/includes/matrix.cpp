@@ -227,6 +227,17 @@ matrix operator*(const matrix& A, const matrix& B) {
     return R;
 }
 
+matrix symmetric(int dimension) {
+    matrix R(dimension, dimension);
+    for (int i = 0; i < dimension; ++i) {
+        for (int j = i; j < dimension; ++j) { // Fill upper triangle and diagonal
+            R(i, j) = static_cast<NUMBER>(rand()) / RAND_MAX; // Random value
+            R(j, i) = R(i, j); // Mirror to lower triangle
+        }
+    }
+    return R;
+}
+
 matrix& matrix::operator*=(const matrix& other) {
     *this = (*this) * other; // Use the global operator*
     return *this;
@@ -306,6 +317,13 @@ void matrix::print(std::string s) const {
     }
     std::cout << std::endl;
 }
+
+matrix matrix::identity(int dimension){
+    matrix I(dimension, dimension);
+    I.setid(); // Set as identity matrix
+    return I;
+}
+
 
 
 // QR decomposition operations:
@@ -422,6 +440,125 @@ matrix QR::inverse(const matrix& A) {
     return A_inverse; // This matrix is already A_inverse
 }
 
+void EVD::timesJ(matrix& A, int p, int q, NUMBER theta) {
+    double c = std::cos(theta);
+    double s = std::sin(theta);
+    // Loop through all rows of the matrix
+    for (int i = 0; i < A.size1(); ++i) {
+        // Store original values before modification as they are used in the second calculation
+        NUMBER a_ip = A(i, p); // Original A_i,p
+        NUMBER a_iq = A(i, q); // Original A_i,q
+
+        // Apply the rotation to the elements in column p
+        A(i, p) = c * a_ip - s * a_iq;
+
+        // Apply the rotation to the elements in column q
+        A(i, q) = s * a_ip + c * a_iq;
+    }
+}
+void EVD::Jtimes(matrix& A, int p, int q, NUMBER theta) {
+    double c = std::cos(theta);
+    double s = std::sin(theta);
+    // Loop through all columns of the matrix
+    for (int j = 0; j < A.size2(); ++j) {
+        // Store original values before modification as they are used in the second calculation
+        NUMBER a_pj = A(p, j); // Original A_p,j
+        NUMBER a_qj = A(q, j); // Original A_q,j
+
+        // Apply the rotation to the elements in row p
+        A(p, j) = c * a_pj + s * a_qj;
+
+        // Apply the rotation to the elements in row q
+        A(q, j) = -s * a_pj + c * a_qj;
+    }
+}
+
+EVD::mtuple EVD::cyclic(matrix& A_in, matrix& V_in) {
+    int n = A_in.size1(); // Dimension of the square matrix
+
+    // Basic validation for symmetric matrix A
+    if (A_in.size1() != A_in.size2()) {
+        throw std::invalid_argument("Matrix A must be square for Jacobi diagonalization.");
+    }
+    // Also, V_in must be square and of the same dimension as A_in
+    if (V_in.size1() != n || V_in.size2() != n) {
+        throw std::invalid_argument("Matrix V must be a square matrix of the same dimension as A.");
+    }
 
 
+    bool changed;
+    int sweeps = 0; // Optional: count sweeps for debugging or limiting iterations
+    const int MAX_SWEEPS = 100; // Prevent infinite loops for ill-conditioned matrices
+
+    do {
+        changed = false;
+        sweeps++;
+
+        // Iterate through all unique off-diagonal pairs (p, q) where p < q
+        for (int p = 0; p < n - 1; p++) {
+            for (int q = p + 1; q < n; q++) {
+                // Get the current off-diagonal element and the diagonal elements
+                NUMBER apq = A_in(p, q);
+                NUMBER app = A_in(p, p);
+                NUMBER aqq = A_in(q, q);
+
+                // Calculate the rotation angle theta
+                // The problem statement uses Atan2, which maps to std::atan2
+                NUMBER theta = 0.5 * std::atan2(2 * apq, aqq - app);
+
+                NUMBER c = std::cos(theta);
+                NUMBER s = std::sin(theta);
+
+                // Calculate the new diagonal elements AFTER the full J^T A J transformation
+                // These formulas are provided directly in the exercise description
+                NUMBER new_app = c * c * app - 2 * s * c * apq + s * s * aqq;
+                NUMBER new_aqq = s * s * app + 2 * s * c * apq + c * c * aqq;
+
+                // Convergence check: If diagonal elements change, a rotation was performed
+               
+                if (new_app != app || new_aqq != aqq) { 
+                    changed = true;
+
+                    // Apply rotation to A: A <- A J
+                    EVD::timesJ(A_in, p, q, theta);
+
+                    // Apply rotation to A: A <- J^T A
+                    EVD::Jtimes(A_in, p, q, -theta);
+
+                    // Apply rotation to V:
+                    EVD::timesJ(V_in, p, q, theta);
+                }
+            }
+        }
+    } while (changed && sweeps < MAX_SWEEPS); // Continue if changes were made and max sweeps not reached
+
+    // After convergence, A_in should be diagonal (D) and V_in contains eigenvectors (V)
+    return std::make_tuple(A_in, V_in);
+}
+
+// EVD constructor implementation
+EVD::EVD(const matrix& M) {
+    if (M.size1() != M.size2()) {
+        throw std::invalid_argument("Eigenvalue decomposition is only defined for square matrices.");
+    }
+    // Make a copy of M to modify it in-place for diagonalization
+    matrix A_copy = M;
+    // Initialize V as an identity matrix of the same dimension
+    V = matrix::identity(M.size1());
+
+    // Perform cyclic Jacobi diagonalization
+    // The result tuple contains the diagonalized matrix (D) and the accumulated eigenvectors (V)
+    mtuple result = EVD::cyclic(A_copy, V);
+
+    // A_copy is now the diagonal matrix D
+    matrix D_matrix = std::get<0>(result);
+    // V is the eigenvector matrix (which was passed by reference and modified)
+    V = std::get<1>(result);
+
+    // Extract eigenvalues from the diagonal of D_matrix
+    w = vector(D_matrix.size1());
+    for (int i = 0; i < D_matrix.size1(); ++i) {
+        w[i] = D_matrix(i, i);
+    }
+}
 }//pp

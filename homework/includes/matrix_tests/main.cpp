@@ -8,6 +8,14 @@
 
 int main() {
     using namespace pp;
+
+    matrix A_sym = symmetric(4);
+    std::cout << "Symmetric matrix A:" << std::endl;
+    A_sym.print("A = ");
+    matrix A_sym_transpose = A_sym.transpose();
+    std::cout << "Transpose of A:" << std::endl;
+    A_sym_transpose.print("A^T = ");
+
     std::srand(std::time(nullptr)); // Seed random number generator
     
     // Create two 4x4 matrices with random integers
@@ -74,6 +82,7 @@ int main() {
     
     vector v_not_working = m4 * v3;
     v_not_working.print("This should not work:");
+    
     
     return 0;
 }

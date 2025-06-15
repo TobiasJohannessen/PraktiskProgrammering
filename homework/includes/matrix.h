@@ -9,6 +9,7 @@
 #include<vector>
 #include<initializer_list>
 #include<functional>
+#include <stdexcept> // For exceptions
 namespace pp{
 struct vector {
 	std::vector<NUMBER> data;
@@ -80,7 +81,7 @@ struct matrix {
 	matrix& operator*=(const NUMBER);
 	matrix& operator/=(const NUMBER);
 	matrix  operator^(int);
-
+	static matrix identity(int dimension);
 	void print(std::string s="") const;
 };
 
@@ -91,6 +92,7 @@ matrix operator*(const matrix&, NUMBER);
 matrix operator*(NUMBER, const matrix&);
 matrix operator/(const matrix&, NUMBER);
 vector operator*(const matrix&, const vector&);
+matrix symmetric(int dimension); // Create a symmetric matrix with given dimension
 bool approx(const matrix& A,const matrix& B,NUMBER acc=1e-6,NUMBER eps=1e-6);
 
 class QR 
@@ -106,7 +108,21 @@ public:
 
 	QR() = delete; //Prevent instantiation i.e. this class is only used to call upon functions and not as an object itself.
 };
+
+class EVD{
+public:
+	using mvtuple = std::tuple<matrix, vector>; // Type definition
+	using mtuple = std::tuple<matrix, matrix>; // Type definition
+	vector w;
+	matrix V;
+	static void timesJ(matrix& A, int p, int q, NUMBER theta);
+	static void Jtimes(matrix& A, int p, int q, NUMBER theta);
+	static mtuple cyclic(matrix& A, matrix& V_in);
+	EVD(const matrix& M);
+
+};
 #endif
 }
+
 
 
