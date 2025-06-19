@@ -121,8 +121,7 @@ public:
 	EVD(const matrix& M);
 
 };
-#endif
 }
-
+#endif
 
 
