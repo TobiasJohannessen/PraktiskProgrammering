@@ -1,15 +1,20 @@
 I have done the examination project <strong>Bi-linear interpolation on a rectilinear grid in two dimensions</strong> given by the description:
 
 """
-Introduction
+<strong>Introduction</strong>
+
 A rectilinear grid (note that rectilinear is not necessarily cartesian nor regular) in two dimensions is a set of nx×ny points where each point can be adressed by a double index (i,j) where 1 ≤ i ≤ nx, 1 ≤ j ≤ ny and the coordinates of the point (i,j) are given as (xi,yj), where x and y are vectors with sizes nx and ny correspondingly. The values of the tabulated function F at the grid points can then be arranged as a matrix {Fi,j=F(xi,yj)}.
-Problem
+
+<strong>Problem</strong>
+
 Build an interpolating routine which takes as the input the vectors {xi} and {yj}, and the matrix {Fi,j} and returns the bi-linear interpolated value of the function at a given 2D-point p=(px,py).
-Hints
+
+<strong>Hints</strong>
 See the chapter "Bi-linear interpolation" in the book.
+
 The signature of the interpolating subroutine can be
 
-static double bilinear(double[] x, double[] y, matrix F, double px, double py)
+static double bilinear(double[] x, double[] y, matrix F, double px, double py)<br>
 
 """
 
