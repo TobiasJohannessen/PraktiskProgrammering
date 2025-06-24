@@ -72,27 +72,3 @@ while (true) { //while-loop
 return std::make_tuple(xlist, ylist);
 }
 
-
-std::tuple<vec, vec, vec> slope_field(
-    std::function<vec(double, const vec&)> f,
-    double x_init,
-    double x_final,
-    double y_init,
-    double dx
-) {
-    vec x_vals;
-    vec y_vals;
-    vec slopes;
-
-    for (double x = x_init; x <= x_final; x += dx) {
-        for (double y = 0; y <= 1; y += dx) {
-            vec point = {x, y};
-            vec slope = f(x, point);
-            x_vals.push_back(x);
-            y_vals.push_back(y);
-            slopes.push_back(slope.norm());
-        }
-    }
-
-    return std::make_tuple(x_vals, y_vals, slopes);
-}
