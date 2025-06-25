@@ -103,6 +103,7 @@ public:
 
 	static mtuple decomp(const matrix&);
 	static vector solve(const matrix&, const matrix&, const vector&);
+	static vector solve(const matrix&, const vector&);
 	static double det(const matrix&);
 	static matrix inverse(const matrix&);
 

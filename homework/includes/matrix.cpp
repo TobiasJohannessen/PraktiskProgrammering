@@ -363,10 +363,15 @@ QR::mtuple QR::decomp(const matrix& M) {
     return std::make_tuple(Q, R);
 }
 
+
 vector QR::solve(const matrix& Q, const matrix& R, const vector& b) {
     if (Q.size1() != b.size() || Q.size2() != R.size1() || R.size1() != R.size2()) {
         throw std::invalid_argument("Incompatible dimensions for QR solve.");
     }
+
+    // Solve the system Ax = b where A = QR.
+    // We need to solve Q^T b = R x, where Q is orthogonal
+    // and R is upper triangular.
 
     // Step 1: Solve Qy = b => y = Q^T b
     // Q is column-major. Q(row, col) is cols[col][row].
@@ -393,6 +398,16 @@ vector QR::solve(const matrix& Q, const matrix& R, const vector& b) {
         x[i] /= R(i, i);
     }
     return x;
+}
+
+vector QR::solve(const matrix& M, const vector& b) {
+    // Perform QR decomposition of M
+    QR::mtuple qr = QR::decomp(M);
+    matrix Q = std::get<0>(qr);
+    matrix R = std::get<1>(qr);
+
+    // Use the solve function with Q and R
+    return QR::solve(Q, R, b);
 }
 
 double QR::det(const matrix& M) {
