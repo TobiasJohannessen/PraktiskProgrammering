@@ -9,6 +9,9 @@
 using namespace pp;
 
 int main() {
+
+    vector test = vector(10);
+    test.print();
     // Vector to store the results of each test (true for pass, false for fail)
     std::vector<bool> test_results;
     bool all_tests_passed = true;

@@ -13,6 +13,7 @@ all: main test_executable
 # Rule to build the 'main' executable (for general functionality testing, if any)
 main: main.o matrix.o
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $@ $^
+	./main > out.txt
 
 main.o: main.cpp $(INCLUDE_DIR)/matrix.h
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $<
