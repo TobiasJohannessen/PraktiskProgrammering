@@ -3,7 +3,9 @@
 #include<functional>
 #include<cmath>
 #include"../includes/matrix.h"
+#include"../includes/ODE.h"
 #include<iostream>
+#include<fstream>
 #include<random>
 
 using namespace pp;
@@ -165,6 +167,25 @@ vec g_himmelblau(vec x) {
     // Gradient of the Himmelblau function
 }
 
+
+double rmin = 1e-4, rmax = 8.0;
+double acc = 1e-6, eps = 1e-6; // Default accuracy and epsilon for the hydrogen atom problem
+vec M_of_E(vec Evec) {
+    double E = Evec[0];
+    auto F = [E](double r, const vec& y) {
+        return vec{ y[1], -2.0 * (E + 1.0/r) * y[0] };
+    };
+    auto sol = driver(F, rmin, rmax, vec{rmin - rmin*rmin, 1.0 - 2*rmin}, 0.01, acc, eps);
+    auto& ylist = std::get<1>(sol);
+    vec y_end = ylist.back();
+    return vec{ y_end[0] };
+}
+
+
+
+
+
+
 int main() {
     // Example usage of the Newton's method
     
@@ -240,6 +261,68 @@ int main() {
         std::cout << fail_count << " out of " << total_count << " tests failed for the Himmelblau function.\n";
     }
 
-   
+
+
+    // BOUND STATES OF HYDROGEN ATOM
+    std::cout << "\n\n -------------------BOUND STATES OF HYDROGEN ATOM------------------------------- \n\n";
+    
+    // Find the ground state energy of the hydrogen atom using Newton's method
+    vec Emin = newton(M_of_E, vec{-0.5}, 1e-6, vec{1e-3});
+    double E0 = Emin[0];
+    std::cout << "Found ground-state energy E0 = " << E0 << "\n";
+
+    // Recompute the wavefunction using the found energy E0 
+    auto sol = driver([E0](double r, const vec& y){
+        return vec{ y[1], -2.0*(E0 + 1.0/r)*y[0] };
+    }, rmin, rmax, vec{rmin - rmin*rmin, 1.0 - 2*rmin}, 0.01, 1e-6, 1e-6);
+
+    auto xs = std::get<0>(sol);
+    auto ys = std::get<1>(sol);
+
+    std::ofstream hydrogen_output("data/hydrogen_wf.txt");
+    hydrogen_output << "#r\tpsi(r)\texact_f0(r)\n";
+    for (size_t i = 0; i < xs.size(); ++i)
+        hydrogen_output << xs[i] << "\t" << ys[i][0] << "\t" << xs[i] * std::exp(-xs[i]) << "\n";
+    hydrogen_output.close();
+    std::cout << "Wavefunction data saved to hydrogen_wf.txt, exact f0(r)=r e^{-r} included.\n";
+
+    //Test convergences:
+    std::ofstream convergence_rmax("data/convergence_rmax.txt");
+    for (double rmax_i = 4; rmax_i <= 10; rmax_i += 0.5) {
+        rmax = rmax_i;
+        vec Emin = newton(M_of_E, vec{-0.5}, 1e-6, vec{1e-3});
+        double E0 = Emin[0];
+        convergence_rmax << rmax_i << "\t" << E0 + 0.5 << "\n";
+    }
+    convergence_rmax.close();
+    rmax = 8.0; // Reset rmax for the next test
+    std::ofstream convergence_rmin("data/convergence_rmin.txt");
+    for (double rmin_i = 1e-4; rmin_i <= 1.5; rmin_i *= sqrt(10)) {
+        rmin = rmin_i;
+        vec Emin = newton(M_of_E, vec{-0.5}, 1e-6, vec{1e-3});
+        double E0 = Emin[0];
+        convergence_rmin << rmin_i << "\t" << E0 + 0.5 << "\n";
+    }
+    convergence_rmin.close();
+    rmin = 1e-4; // Reset rmin for the next test
+    std::ofstream convergence_acc("data/convergence_acc.txt");
+    for (double acc_i = 1e-6; acc_i <= 1e-2; acc_i *= sqrt(10)) {
+        acc = acc_i;
+        vec Emin = newton(M_of_E, vec{-0.5}, acc_i, vec{1e-3});
+        double E0 = Emin[0];
+        convergence_acc << acc_i << "\t" << E0 + 0.5 << "\n";
+    }
+    convergence_acc.close();
+    acc = 1e-6; // Reset acc for the next test
+    std::ofstream convergence_eps("data/convergence_eps.txt");
+    for (double eps_i = 1e-6; eps_i <= 1e-2; eps_i *= sqrt(10)) {
+        eps = eps_i;
+        vec Emin = newton(M_of_E, vec{-0.5}, 1e-6, vec{1e-3});
+        double E0 = Emin[0];
+        convergence_eps << eps_i << "\t" << E0 + 0.5 << "\n";
+    }
+    convergence_eps.close();
+
+    
     return 0;
 };

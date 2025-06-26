@@ -167,3 +167,9 @@ Test failed: No expected root matched within tolerance.
 Number of steps taken: 6
 
 2 out of 10 tests failed for the Himmelblau function.
+
+
+ -------------------BOUND STATES OF HYDROGEN ATOM------------------------------- 
+
+Found ground-state energy E0 = -0.499975
+Wavefunction data saved to hydrogen_wf.txt, exact f0(r)=r e^{-r} included.
