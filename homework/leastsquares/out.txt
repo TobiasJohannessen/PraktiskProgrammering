@@ -1,25 +1,7 @@
-Data to fit:
-t: 1.000 2.000 3.000 4.000 6.000 9.000 10.000 13.000 15.000 
-y: 117.000 100.000 88.000 72.000 53.000 29.500 25.200 15.200 11.100 
-dy: 6.000 5.000 4.000 4.000 4.000 3.000 3.000 2.000 2.000 
-
-
-To fit the exponential decay, we take the natural logarithm of y.
-This transforms the problem into a linear fit of ln(y) = ln(a) - b * x.
-The uncertainties dlny = dy * d/dy ln(y) = dy / y.
-
-Coefficients:
- 4.959 0.171 
-Fit at 1.000: 4.788
-Fit at 2.000: 4.617
-Fit at 3.000: 4.447
-Fit at 4.000: 4.276
-Fit at 6.000: 3.935
-Fit at 9.000: 3.423
-Fit at 10.000: 3.252
-Fit at 13.000: 2.741
-Fit at 15.000: 2.399
-To determine half-life, calculate t_{1/2} = ln(2)/lambda: 4.062
-Half-life of ThX, determined from fit: 
-4.062days
-For reference, the half-life of ThX (Ra-224) is 3.6316(14) days.
+Fitted coefficients found using linear squars and uncertanties as the square root of the diagonal of the covariance matrix:
+Fitted ln(A) = 4.95866 ± 0.0354019
+Fitted lambda = 0.170624 ± 0.00715662
+A = 142.404 ± 5.04136
+Half-life: 4.06242 ± 0.170394 days
+The modern value of the half-life of ThX (Ra-224) is 3.6316(14) d, which is not in agreement with the value found here.
+The discrepancy is on the order of2.5284σ.
