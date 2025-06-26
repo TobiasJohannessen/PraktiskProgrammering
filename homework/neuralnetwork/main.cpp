@@ -92,7 +92,7 @@ class ANN{
                     }
                 }
                 return grad / x.size(); // Return the average gradient
-};
+            };
 
             
             //Now, minimize the cost function using a minimization algorithm
@@ -128,6 +128,38 @@ class ANN{
                 as[i] = train_params[i + weights.size()]; // Update as
                 bs[i] = train_params[i + 2 * weights.size()]; // Update bs
          }
+     };
+     double dydx(double input){
+        //This function computes the derivative of the ANN output with respect to the input
+        double derivative = 0.0; // Initialize derivative
+        for (int i = 0; i < weights.size(); ++i) {
+            double z = (input - as[i]) / bs[i]; // Compute the normalized input
+            double dact_dz = std::exp(-z * z) * (1 - 2 * z * z); // Derivative of the activation function
+            derivative += weights[i] * dact_dz / bs[i]; // Scale by weights and normalize by bs
+     }
+        return derivative; // Return the derivative
+    }
+
+    double dy2dx2(double input){
+        //This function computes the second derivative of the ANN output with respect to the input
+        double second_derivative = 0.0; // Initialize second derivative
+        for (int i = 0; i < weights.size(); ++i) {
+            double z = (input - as[i]) / bs[i]; // Compute the normalized input
+            double ddact_dz2 = 2*z* std::exp(-z * z) * (2 * z * z - 3); // Second derivative of the activation function
+            second_derivative += weights[i] * (ddact_dz2 / (bs[i] * bs[i]));
+        }
+        return second_derivative; // Return the second derivative
+     };
+
+     double anti_derivative(double input){
+        //This function computes the anti-derivative of the ANN output with respect to the input
+        double integral = 0.0; // Initialize integral
+        for (int i = 0; i < weights.size(); ++i) {
+            double z = (input - as[i]) / bs[i]; // Compute the normalized input
+            double act = activation_function(z); // Apply the activation function
+            integral += 0.5 * weights[i]* bs[i] * act/z;
+        }
+    return integral; // Return the integral scaled by dx
      };
 };
 
@@ -196,11 +228,18 @@ int main(){
     std::cout << "Training ANN with generated data...\n";
     ann.train(x_train, y_train); // Train the ANN with the generated data
     std::cout << "Training complete.\n";
+
+    vec y_deriv(n_output_points);
+    vec y_2nd_deriv(n_output_points);
+    vec y_integral(n_output_points);
     // Now, generate output points again after training
     output_file.open("data/ann_output_trained.txt");
     for (int i = 0; i < n_output_points; ++i) {
         y_output[i] = ann.forward(x_output[i]); // Compute corresponding output values using the trained ANN
-        output_file << x_output[i] << " " << y_output[i] << "\n"; // Write to file
+        y_deriv[i] = ann.dydx(x_output[i]); // Compute the first derivative
+        y_2nd_deriv[i] = ann.dy2dx2(x_output[i]);
+        y_integral[i] = ann.anti_derivative(x_output[i]); // Compute the anti-derivative
+        output_file << x_output[i] << " " << y_output[i] << "\t" << y_deriv[i] << "\t" << y_2nd_deriv[i] << "\t" << y_integral[i] << "\n"; // Write to file
     }
     output_file.close();
 
