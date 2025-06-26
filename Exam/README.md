@@ -44,3 +44,5 @@ I've currently made 2 types of plots: A zoom in on the grid, and a multiplot wit
 <strong>Extra Possibilities</strong>
 
 If time permits, it would be nice to implement the bicubic interpolation method or the polynomial version of the interpolation method and check whether it provides the same interpolation or not.
+
+Update: I've tried to implement the bicubic interpolation, but it got too complicated that I didn't want to spend too much time on it. You can see the best implementation I got in plots/bicubic_*.png.

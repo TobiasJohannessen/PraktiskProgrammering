@@ -6,7 +6,6 @@
 #include"../includes/ODE.h"
 #include<iostream>
 #include<fstream>
-#include<random>
 
 using namespace pp;
 using vec = vector;

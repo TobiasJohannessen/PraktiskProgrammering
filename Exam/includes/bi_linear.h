@@ -58,4 +58,35 @@ public:
                                 const std::vector<double>& new_y_points) const;
 };
 
+
+class BiCubicInterpolator {
+public:
+    pp::matrix grid;
+    std::vector<double> x_points;
+    std::vector<double> y_points;
+
+    // Constructor
+    BiCubicInterpolator(const pp::matrix& grid,
+                        const std::vector<double>& x_points,
+                        const std::vector<double>& y_points);
+
+    // Bicubic interpolation at (x, y) using internal grid and points
+    double interpolate(double x, double y) const;
+
+    // Static factory method to create an interpolator instance
+    static BiCubicInterpolator create(const pp::matrix& grid,
+                                      const std::vector<double>& x_points,
+                                      const std::vector<double>& y_points);
+
+    // Static convenience method: bicubic interpolation at (x, y) with given grid and points
+    static double interpolate(const pp::matrix& grid,
+                                                const std::vector<double>& x_points,
+                                                const std::vector<double>& y_points,
+                                                double x, double y);
+
+    // Interpolate the grid at new sets of points (assumes new_x_points and new_y_points are sorted)
+    pp::matrix interpolate_grid(const std::vector<double>& new_x_points,
+                                const std::vector<double>& new_y_points) const;
+};
+
 #endif // BI_LINEAR_H

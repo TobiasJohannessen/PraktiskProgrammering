@@ -40,8 +40,17 @@ plot.interp.grid:
 plot.interp.slices:
 	gnuplot plots/plot_functions/plot_interpolated_slices.gp
 
+plot.bicubic.interp.grid:
+	gnuplot plots/plot_functions/plot_bicubic_interpolated_grid.gp
 
-plot.all: plot.grid plot.grid.slices plot.interp.grid plot.interp.slices
+plot.bicubic.interp.slices:
+	gnuplot plots/plot_functions/plot_bicubic_interpolated_slices.gp
+
+plot.compare:
+	gnuplot plots/plot_functions/plot_compare.gp
+
+
+plot.all: plot.grid plot.grid.slices plot.interp.grid plot.interp.slices plot.bicubic.interp.grid plot.bicubic.interp.slices
 	
 
 clean:

@@ -46,7 +46,7 @@ std::tuple<std::vector<double>, std::vector<vec>> driver(
     a = x_init; b = x_final; x = a; y = y_init;
     std::vector<double> xlist; xlist.push_back(x);
     std::vector<vec> ylist; ylist.push_back(y);
-    if (x >= b - 1e-10) return std::tuple(xlist, ylist); // Return when x is sufficiently close to b
+    if (x >= b - 1e-10) return std::make_tuple(xlist, ylist); // Return when x is sufficiently close to b
 while (true) { //while-loop
     if (x >= b) return std::make_tuple(xlist, ylist); //Return when the b is reached
     if (x + dx > b) dx = b - x;
