@@ -103,8 +103,12 @@ int main() {
     fitFile2 << "# t\tfit(y)\n";
     for (double t = 0; t <= 15; t += 0.01) {
         double ln_y = lnA - lambda * t;
-        fitFile << t << "\t" << ln_y << "\n";
-        fitFile2 << t << "\t" << std::exp(ln_y) << "\n";
+        double ln_y1 = lnA + sigma_lnA - lambda*t; // The fit with uncertainty in lnA
+        double ln_y2 = lnA - sigma_lnA - lambda*t; // The fit with uncertainty in lnA
+        double ln_y3 = lnA - (lambda + sigma_lambda)*t; // The fit with uncertainty in lambda
+        double ln_y4 = lnA - (lambda - sigma_lambda)*t; // The fit with uncertainty in lambda
+        fitFile << t << "\t" << ln_y << "\t" << ln_y1 << "\t" << ln_y2 << "\t" << ln_y3 << "\t" << ln_y4 << "\n";
+        fitFile2 << t << "\t" << std::exp(ln_y) << "\t" << std::exp(ln_y1) << "\t" << std::exp(ln_y2) << "\t" << std::exp(ln_y3) << "\t" << std::exp(ln_y4) << "\n";
     }
 
     std::ofstream coeffFile("data/decay_log_coefficients.txt");
